@@ -1,0 +1,18 @@
+# app_identifier("[[APP_IDENTIFIER]]") # The bundle identifier of your app
+# apple_id("[[APPLE_ID]]") # Your Apple email address
+
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile
+
+# App Bundle ID （需要根据实际项目修改）
+app_identifier "com.kfang.fangkebao"
+
+# 用于 App Store connect api，可不改
+apple_id "kfpanke@outlook.com"
+
+# 可不改
+team_id "23M2P3R2AH"
+
+# 可不改
+itc_team_id "122868257"

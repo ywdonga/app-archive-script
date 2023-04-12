@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>测试预发APP下载中心</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- <meta name="viewport" -->
+    <!-- content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;" /> -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <script
+      type="text/javascript"
+      src="https://test-static.kfang.com/js/jquery/jquery.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://test-static.kfang.com/js/qrcode/qrcode.min.js"
+    ></script>
+    <meta charset="utf-8" />
+
+    <style type="text/css">
+      html,
+      body {
+        color: #222;
+        font-family: Microsoft YaHei, Helvitica, Verdana, Tohoma, Arial,
+          san-serif;
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        background-color: #ece9e9;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* 头部样式 */
+      .header {
+        height: 60pt;
+        background-color: #00b3ff;
+        text-align: center;
+        color: white;
+        font-size: 18pt;
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        font-weight: bold;
+        padding-left: 10%;
+        position: fixed;
+        width: 100%;
+        top: 0pt;
+        z-index: 100;
+      }
+
+      #header-nav {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: left;
+        padding-left: 20pt;
+      }
+
+      #header-nav a {
+        padding-left: 10pt;
+        padding-right: 10pt;
+        color: white;
+        font-size: 14pt;
+        font-weight: normal;
+      }
+
+      /* 正文内容样式 */
+      #content {
+        position: absolute;
+        width: 100%;
+        margin-top: 60pt;
+        /* padding-top: 60pt; */
+      }
+
+      ul {
+        list-style: none;
+        margin-left: 10%;
+        margin-right: 10%;
+        padding: 0;
+      }
+
+      .mainmenu {
+        margin-bottom: 60pt;
+      }
+
+      .mainmenu:after {
+        clear: both;
+        content: " ";
+        display: block;
+      }
+
+      .project-title {
+        margin-left: 10.5%;
+        font-weight: 900;
+        line-height: 30pt;
+        font-size: 26pt;
+        color: #333333;
+        padding-left: 0.25em;
+        font-family: "YaHei";
+      }
+
+      .project-title-line {
+        width: 42%;
+        height: 4pt;
+        margin-top: 4pt;
+        border-radius: 2pt;
+        background-color: #c1c1c1;
+      }
+
+      .item-info-container {
+        background-color: white;
+        display: flex;
+        flex-direction: column;
+        padding-left: 10pt;
+        padding-right: 10pt;
+        padding-bottom: 10pt;
+      }
+
+      .app-env-tag {
+        margin-top: 10pt;
+        margin-bottom: 10pt;
+        display: block;
+        color: #555;
+        text-align: left;
+        font-weight: 900;
+        line-height: 22pt;
+      }
+
+      .list-item {
+        float: left;
+        margin: 0 15pt 15pt 15pt;
+        width: 20%;
+        min-width: 200pt;
+        max-width: 30%;
+        border-radius: 10pt;
+        overflow: hidden;
+      }
+
+      b img {
+        border-radius: 10pt;
+      }
+
+      .item-info {
+        line-height: 20pt;
+        white-space: nowrap;
+        word-wrap: normal;
+        text-overflow: ellipsis;
+        /* word-wrap: break-word; */
+        background-color: #fff;
+        color: #999;
+        text-align: left;
+        font-size: 10.5pt;
+        overflow: hidden;
+        display: inline-block;
+      }
+
+      body .mainmenu li a {
+        display: block;
+        color: #fff;
+        text-align: center;
+        position: relative;
+      }
+
+      body .mainmenu li a img {
+        margin: 15pt 15pt 15pt 15pt;
+        width: 150pt;
+        height: 150pt;
+      }
+
+      /* 背景颜色 */
+      body .mainmenu li:nth-child(8n + 1) {
+        background-color: #36a1db;
+      }
+
+      body .mainmenu li:nth-child(8n + 2) {
+        background-color: #678ce1;
+      }
+
+      body .mainmenu li:nth-child(8n + 3) {
+        background-color: #8c67df;
+      }
+
+      body .mainmenu li:nth-child(8n + 4) {
+        background-color: #84d018;
+      }
+
+      body .mainmenu li:nth-child(8n + 5) {
+        background-color: #14c760;
+      }
+
+      body .mainmenu li:nth-child(8n + 6) {
+        background-color: #f3b613;
+      }
+
+      body .mainmenu li:nth-child(8n + 7) {
+        background-color: #ff8a4a;
+      }
+
+      body .mainmenu li:nth-child(8n + 8) {
+        background-color: #fc5366;
+      }
+
+      
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <img
+        alt="看房网"
+        src="https://static.kfang.com/web/img/home-logo.png"
+        class="logo"
+        data-v-aa90ea0a=""
+      />
+      <div id="header-nav"></div>
+    </div>
+
+    <div id="content"></div>
+  </body>
+</html>
+
+<script>
+  var envMap = {
+    Debug: "测试环境",
+    Staging: "预发布环境",
+    "Produc-Adhoc": "线上环境",
+  };
+  window.onload = function () {
+    var url = "./";
+    function sendRequest(name) {
+      return $.ajax({
+        url: `${url}${name}.json`,
+        dataType: "json",
+        method: "GET",
+      });
+    }
+
+    function getVersionDes(ver, build) {
+      let text = "";
+      if (!!ver) {
+        text = `${ver}`;
+      }
+      if (!!build) {
+        text = `${text}(build:${build})`;
+      }
+      if (text === "") {
+        text = "--";
+      }
+      return text;
+    }
+
+    function getAppRuningEnvDesc(value) {
+      let lowcased = value.toLowerCase();
+      if (lowcased == "debug" || lowcased == "test") {
+        return "测试环境";
+      } else if (lowcased == "staging") {
+        return "预发布环境";
+      } else if (lowcased == "productadhoc" || lowcased == "product-adhoc") {
+        return "线上环境";
+      } else if (lowcased == "release") {
+        return "App Store";
+      }
+      return "Unknown";
+    }
+
+    function trimBranchTag(id) {
+      const regex = /(-offline)|(-Debug)|(-debug)|(-Staging)|(-staging)|(-ProductAdhoc)|(-productadhoc)|(-Release)|(-release)/
+      return id.replace(regex, "")
+    }
+
+    getAppType();
+    function getAppType() {
+      sendRequest("projects").then((res) => {
+        console.log(res);
+        var nameList = res;
+        let promiseAll = [];
+        for (let i = 0; i < res.length; i++) {
+          let item = res[i];
+          if (!!item.id) {
+            promiseAll.push(sendRequest(item.id));
+          } else {
+            promiseAll.push(sendRequest(res[i]));
+          }
+        }
+        Promise.all(promiseAll).then((result) => {
+          console.log(result);
+          for (let i = 0; i < result.length; i++) {
+            let wrapper = $(
+              `<div id="project${i}"></div>`
+            );
+
+            let projectTitle = $(`<div class="project-title"></div>`);
+            let item = nameList[i];
+            let span = $(`<span></span>`);
+            if (!!item.id) {
+              span.text(item.name);
+              let navItem = $(
+                `<a class="navlink" href="#project${i}">${item.name}</a>`
+              );
+              $("#header-nav").append(navItem);
+            } else {
+              span.text(nameList[i]);
+            }
+            projectTitle.append(span);
+            let line = $(`<div class="project-title-line"></div>`);
+            projectTitle.append(line);
+
+            let mainmenu = $('<ul class="mainmenu"></ul>');
+            for (let j = 0; j < result[i].length; j++) {
+              console.log(`---- ${result[i][j]}`);
+              let encodeUrl = result[i][j].downloadUrl;
+              let date = new Date(result[i][j].date * 1000);
+              let html = `<li class="list-item">
+                <a href="${encodeUrl} ">
+                  <b><img src="https://test-pm3.kfang.com/qr?size=200&border=4&text==${encodeUrl}" /></b>
+                  <div class="item-info-container">
+                  <span class="app-env-tag"> ${getAppRuningEnvDesc(
+                    result[i][j].env
+                  )}</span>
+                  <span class="item-info">版本: ${getVersionDes(
+                    result[i][j].version,
+                    result[i][j].build
+                  )}</span>
+                  <span class="item-info">分支: ${trimBranchTag(result[i][j].branchId)}</span>
+                  <span class="item-info">${
+                    result[i][j].changelog
+                  }</span>
+                  <span class="item-info"> ${
+                    date.toLocaleDateString() + " " + date.toLocaleTimeString()
+                  }</span>
+                  </div>
+                </a></li>`;
+              mainmenu.append(html);
+            }
+            wrapper.append(projectTitle);
+            wrapper.append(mainmenu);
+            $("#content").append(wrapper);
+          }
+        });
+      });
+    }
+  };
+</script>

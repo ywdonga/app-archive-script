@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>compileBitcode</key>
+	<true/>
+	<key>destination</key>
+	<string>export</string>
+	<key>method</key>
+	<string>development</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<!-- bundle id 以及 相关的profile -->
+		<key>com.kfang.fangkebao</key>
+		<string>com.kfang.fangkebao.dev</string>
+    <key>com.kfang.fangkebao.notification-service</key>
+		<string>com.kfang.fangkebao.notification-service.dev</string>
+		<!-- ============================ -->
+	</dict>
+	<key>signingCertificate</key>
+	<string>Apple Development</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>stripSwiftSymbols</key>
+	<true/>
+	<key>teamID</key>
+	<string>23M2P3R2AH</string>
+	<key>thinning</key>
+	<string>&lt;none&gt;</string>
+</dict>
+</plist>

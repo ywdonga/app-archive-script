@@ -1,0 +1,180 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# 以下scheme, workspace, bundle id需要改动
+# 
+
+default_platform(:ios)
+
+# ===========================
+# ======= 需配置参数 ==========
+scheme="agent-iOS"
+workspace="agent-iOS.xcworkspace"
+
+
+build_dir = "./build/#{scheme}"
+build_release_dir = "./build/#{scheme}-release"
+# ===========================
+# ===========================
+
+def push_ding(alert)
+  post = { "msgtype" => "text", "text" => { "content" => alert } }
+  system('curl', 'https://oapi.dingtalk.com/robot/send?access_token=b4caa6fe07cf4d54dca665816043432dacf84abc4f6324fda0e3629528be0b67', '-H', 'Content-Type: application/json', '-d', post.to_json)
+
+  post_feishu = { "msg_type" => "text", "content" => { "text" => alert } }
+  system('curl', 'https://open.feishu.cn/open-apis/bot/v2/hook/490aa57e-81db-437d-9964-86f8c580d7c1', '-H', 'Content-Type: application/json', '-d', post_feishu.to_json)
+end
+
+platform :ios do
+
+  # 测试包
+  desc "测试环境打包"
+  lane :Debug do
+    puts "执行 测试环境打包"
+    cocoapods(
+      clean_install: true,
+      repo_update: true,
+      verbose: true,
+      podfile: "./Podfile"
+    )
+    build_app(scheme: scheme, 
+      workspace: workspace,
+      configuration: "Debug",
+      sdk: "iphoneos", 
+      xcargs: "-allowProvisioningUpdates",
+      codesigning_identity: "Apple Development",
+      output_directory: build_dir,
+      export_method: "development",
+      export_options: "./fastlane/ExportOptionsDevelopment.plist"
+    )
+  end
+
+  # 预发布包
+  desc "预发环境打包"
+  lane :Staging do
+    puts "执行 预发环境打包"
+    cocoapods(
+      clean_install: true,
+      repo_update: true,
+      verbose: true,
+      podfile: "./Podfile"
+    )
+    build_app(scheme: scheme, 
+      workspace: workspace,
+      configuration: "Staging",
+      sdk: "iphoneos", 
+      xcargs: "-allowProvisioningUpdates",
+      codesigning_identity: "Apple Distribution",
+      output_directory: build_dir,
+      export_method: "ad-hoc",
+      export_options: "./fastlane/ExportOptionsAdhoc.plist"
+    )
+  end
+  # 线上包
+  desc "线上环境打包"
+  lane :ProductAdhoc do
+    puts "执行 线上环境打包"
+    cocoapods(
+      clean_install: true,
+      repo_update: true,
+      verbose: true,
+      podfile: "./Podfile"
+    )
+    build_app(scheme: scheme, 
+      workspace: workspace,
+      configuration: "ProductAdhoc",
+      sdk: "iphoneos", 
+      xcargs: "-allowProvisioningUpdates",
+      codesigning_identity: "Apple Distribution",
+      output_directory: build_dir,
+      export_method: "ad-hoc",
+      export_options: "./fastlane/ExportOptionsAdhoc.plist"
+    )
+  end
+
+  # app store发布包 
+  desc "appstore打包"
+  lane :Release do
+    puts "执行 appstore打包"
+    cocoapods(
+      clean_install: true,
+      repo_update: true,
+      verbose: true,
+      podfile: "./Podfile"
+    )
+    
+    xcodebuild(
+      archive: true,
+      archive_path: "./build/app.xcarchive",
+      scheme: scheme, 
+      workspace: workspace,
+      configuration: "Release"
+    )
+
+    xcexport(
+      sdk: "iphoneos", 
+      xcargs: "-allowProvisioningUpdates",
+      codesigning_identity: "Apple Distribution",
+      archive_path: "./build/app.xcarchive",
+      export_archive: false,
+      export_method: "ad-hoc", 
+      export_path: build_dir,
+      export_options_plist: "./fastlane/ExportOptionsAdhoc.plist"
+    )
+
+    xcexport(
+      sdk: "iphoneos", 
+      xcargs: "-allowProvisioningUpdates",
+      codesigning_identity: "Apple Distribution",
+      archive_path: "./build/app.xcarchive",
+      export_archive: false,
+      export_method: "app-store", 
+      export_path: build_release_dir,
+      export_options_plist: "./fastlane/ExportOptionsRelease.plist"
+    )
+  end
+
+  # app store发布包 
+  desc "appstore上传"
+  lane :Upload do
+    upload_to_app_store(
+      api_key: {
+        key_id: "9C9X282KD6",
+        issuer_id: "cba93062-9e08-4fec-b666-05799cfc9175",
+        filepath: "./fastlane/AuthKey_9C9X282KD6.p8",
+      },
+      ipa:  build_release_dir + "/#{scheme}.ipa",
+      skip_screenshots: true,
+      skip_metadata: true,
+      skip_app_version_update: true,
+      precheck_include_in_app_purchases: false
+    )
+    desc = "上传 #{scheme} ipa成功"
+    push_ding desc
+  end
+
+  desc "appstore上传"
+  lane :Dex do 
+    push_ding "test"
+  end
+end
+
+# 处理错误执行
+error do |lane, exception|
+  if lane == :Upload
+    desc = "上传 #{scheme} ipa失败: #{exception}"
+    push_ding desc
+  end
+end
